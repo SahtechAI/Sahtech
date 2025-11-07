@@ -168,6 +168,26 @@ class _ChoiceScreenState extends State<ChoiceScreen>
       );
     }
 
+    // Determine screen dimensions
+    Size screenSize = MediaQuery.of(context).size;
+    bool isLandscape = screenSize.width > screenSize.height;
+    bool isSmallScreen = screenSize.height < 700;
+    
+    // Define responsive values
+    double titleFontSize = isLandscape ? 20.sp : (isSmallScreen ? 22.sp : 24.sp);
+    double subtitleFontSize = isLandscape ? 12.sp : (isSmallScreen ? 14.sp : 14.sp);
+    double cardPadding = isLandscape ? 12.h : (isSmallScreen ? 14.h : 16.h);
+    double spacing = isLandscape ? 12.h : (isSmallScreen ? 16.h : 20.h);
+    double bottomSpacing = isLandscape ? 12.h : (isSmallScreen ? 20.h : 24.h);
+    double titleSpacing = isLandscape ? 8.h : (isSmallScreen ? 12.h : 12.h);
+    double betweenCardsSpacing = isLandscape ? 10.h : (isSmallScreen ? 14.h : 16.h);
+    double topPadding = isLandscape ? 16.h : (isSmallScreen ? 20.h : 24.h);
+    double logoHeight = isLandscape ? 35.h : (isSmallScreen ? 35.h : 40.h);
+    double cardIconSize = isLandscape ? 20.w : (isSmallScreen ? 22.w : 22.w);
+    double cardHeight = isLandscape ? 35.w : (isSmallScreen ? 40.w : 40.w);
+    double buttonHeight = isLandscape ? 48.h : (isSmallScreen ? 50.h : 54.h);
+    double textPadding = isLandscape ? 12.w : (isSmallScreen ? 16.w : 16.w);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -176,7 +196,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 24.h),
+              SizedBox(height: topPadding),
 
               // Row for logo and language selector
               Row(
@@ -190,7 +210,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                   // Logo in the center
                   Image.asset(
                     'lib/assets/images/mainlogo.jpg',
-                    height: 40.h,
+                    height: logoHeight,
                     fit: BoxFit.contain,
                   ),
 
@@ -199,14 +219,14 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                 ],
               ),
 
-              SizedBox(height: 20.h),
+              SizedBox(height: spacing),
 
               // Title
               Center(
                 child: Text(
                   _translations['title']!,
                   style: TextStyle(
-                    fontSize: 24.sp,
+                    fontSize: titleFontSize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                     letterSpacing: -0.5,
@@ -214,17 +234,17 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                 ),
               ),
 
-              SizedBox(height: 12.h),
+              SizedBox(height: titleSpacing),
 
               // Subtitle
               Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  padding: EdgeInsets.symmetric(horizontal: textPadding),
                   child: Text(
                     _translations['subtitle']!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: subtitleFontSize,
                       color: Colors.grey[700],
                       height: 1.4,
                     ),
@@ -232,7 +252,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                 ),
               ),
 
-              SizedBox(height: 40.h),
+              SizedBox(height: isLandscape ? 20.h : (isSmallScreen ? 25.h : 40.h)),
 
               // User Selection Card
               InkWell(
@@ -244,7 +264,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: cardPadding),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
@@ -267,8 +287,8 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                   child: Row(
                     children: [
                       Container(
-                        width: 40.w,
-                        height: 40.w,
+                        width: cardHeight,
+                        height: cardHeight,
                         decoration: BoxDecoration(
                           color: Color(0xFFD5FFB8),
                           shape: BoxShape.circle,
@@ -276,7 +296,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                         child: Icon(
                           Icons.person_outline,
                           color: Colors.black87,
-                          size: 22.w,
+                          size: cardIconSize,
                         ),
                       ),
                       SizedBox(width: 16.w),
@@ -321,7 +341,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                 ),
               ),
 
-              SizedBox(height: 16.h),
+              SizedBox(height: betweenCardsSpacing),
 
               // Nutritionist Selection Card
               InkWell(
@@ -333,7 +353,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: cardPadding),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
@@ -356,8 +376,8 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                   child: Row(
                     children: [
                       Container(
-                        width: 40.w,
-                        height: 40.w,
+                        width: cardHeight,
+                        height: cardHeight,
                         decoration: BoxDecoration(
                           color: Color(0xFFD5FFB8),
                           shape: BoxShape.circle,
@@ -365,7 +385,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>
                         child: Icon(
                           Icons.medical_information_outlined,
                           color: Colors.black87,
-                          size: 22.w,
+                          size: cardIconSize,
                         ),
                       ),
                       SizedBox(width: 16.w),
@@ -415,12 +435,12 @@ class _ChoiceScreenState extends State<ChoiceScreen>
               // Custom Button for navigation
               Container(
                 width: double.infinity,
-                margin: EdgeInsets.only(bottom: 24.h),
+                margin: EdgeInsets.only(bottom: bottomSpacing),
                 child: CustomButton(
                   text: _translations['continue']!,
                   onPressed: navigateToNextScreen,
                   width: 1.sw - 48.w,
-                  height: 54.h,
+                  height: buttonHeight,
                 ),
               ),
             ],

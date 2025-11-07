@@ -18,13 +18,12 @@ class AuthCheck extends StatefulWidget {
 class _AuthCheckState extends State<AuthCheck> {
   final StorageService _storageService = StorageService();
   final AuthService _authService = AuthService();
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // We need to use a slight delay to allow the context to be ready for navigation
-    Future.delayed(Duration.zero, () {
+    // Run auth check logic immediately after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAuthStatusAndNavigate();
     });
   }
@@ -88,12 +87,6 @@ class _AuthCheckState extends State<AuthCheck> {
         if (mounted && context.mounted) {
           Navigator.pushReplacementNamed(context, '/splash');
         }
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -209,29 +202,8 @@ class _AuthCheckState extends State<AuthCheck> {
 
   @override
   Widget build(BuildContext context) {
-    // Always show a loading indicator while we check auth status and navigate
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'lib/assets/images/mainlogo.jpg',
-              width: 150,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(
-              color: AppColors.lightTeal,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Chargement...',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
+    // Show the splash screen while checking auth status to prevent white screen
+    // This ensures smooth transition from OS-level splash to app content
+    return const SplashScreen(); // Show the splash screen right away
   }
 }

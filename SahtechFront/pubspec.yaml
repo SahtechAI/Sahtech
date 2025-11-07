@@ -102,6 +102,7 @@ flutter:
     - lib/assets/images/map_background.jpg
     - lib/assets/images/password1.jpg
     - lib/assets/images/password2.jpg
+    - lib/assets/images/getstarted2.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
