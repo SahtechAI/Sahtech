@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sahtech/presentation/profile/getstarted.dart';
 import 'package:sahtech/core/theme/colors.dart';
+import 'package:sahtech/core/base/base_screen.dart';
 import 'package:sahtech/presentation/widgets/custom_button.dart';
 
 class OnboardingScreen3 extends StatefulWidget {
@@ -22,30 +23,32 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            bool isLandscape =
-                MediaQuery.of(context).orientation == Orientation.landscape;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Determine orientation based on width vs height
+        bool isLandscape = MediaQuery.of(context).size.width >
+            MediaQuery.of(context).size.height;
 
-            // Responsive dimensions
-            double imageWidth = isLandscape ? 0.35.sw : 0.65.sw;
-            double imageHeight = isLandscape ? 0.4.sh : 0.3.sh;
-            double titleFontSize = isLandscape ? 18.sp : 26.sp;
-            double subtitleFontSize = isLandscape ? 12.sp : 16.sp;
-            double spacing = isLandscape ? 10.h : 20.h;
+        // Define sizes based on orientation
+        double imageWidth = isLandscape
+            ? 0.4.sw
+            : 0.6.sw; // 40% for landscape, 60% for portrait
+        double imageHeight = isLandscape
+            ? 0.25.sh
+            : 0.35.sh; // 25% for landscape, 35% for portrait
+        double titleFontSize = isLandscape ? 20.sp : 28.sp;
+        double subtitleFontSize = isLandscape ? 12.sp : 16.sp;
 
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              // Makes the screen scrollable when rotated
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: 1.sh),
                 child: IntrinsicHeight(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       // Skip button
                       Align(
@@ -74,19 +77,21 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
                       ),
 
                       // Image
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: spacing),
+                      Expanded(
+                        flex: 4,
                         child: Center(
-                          child: Image.asset(
-                            'lib/assets/images/onbor3.jpg',
-                            width: imageWidth,
-                            height: imageHeight,
+                          child: FittedBox(
                             fit: BoxFit.contain,
+                            child: Image.asset(
+                              'lib/assets/images/onbor3.jpg',
+                              width: imageWidth,
+                              height: imageHeight,
+                            ),
                           ),
                         ),
                       ),
 
-                      // Title
+                      // Title text
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Text(
@@ -102,7 +107,7 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
 
                       SizedBox(height: 16.h),
 
-                      // Subtitle
+                      // Subtitle text
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Text(
@@ -116,21 +121,40 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
                         ),
                       ),
 
-                      SizedBox(height: spacing),
+                      SizedBox(height: 24.h),
 
                       // Pagination dots
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _dot(false),
+                          Container(
+                            width: 8.w,
+                            height: 8.w,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                           SizedBox(width: 8.w),
-                          _dot(false),
+                          Container(
+                            width: 8.w,
+                            height: 8.w,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                           SizedBox(width: 8.w),
-                          _dot(true),
+                          Container(
+                            width: 8.w,
+                            height: 8.w,
+                            decoration: BoxDecoration(
+                              color: AppColors.lightTeal,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                         ],
                       ),
-
-                      const Spacer(),
 
                       // Next button
                       Padding(
@@ -160,21 +184,10 @@ class _OnboardingScreen3State extends State<OnboardingScreen3> {
                   ),
                 ),
               ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _dot(bool active) {
-    return Container(
-      width: 8.w,
-      height: 8.w,
-      decoration: BoxDecoration(
-        color: active ? AppColors.lightTeal : Colors.grey[300],
-        shape: BoxShape.circle,
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

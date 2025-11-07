@@ -196,8 +196,6 @@ class _BirthdayScreenState extends State<BirthdayScreen> {
       if (userType == 'nutritionist') {
         // Always assign allergies regardless if empty
         widget.nutritionistData!.allergies = _selectedAllergies;
-       
-       
 
         // For nutritionist, navigate to signup screen
         Navigator.push(
@@ -213,7 +211,7 @@ class _BirthdayScreenState extends State<BirthdayScreen> {
         widget.userData!.allergies = _selectedAllergies;
         // Set hasAllergies based on selection
         widget.userData!.hasAllergies = _selectedAllergies.isNotEmpty;
-        
+
         // Format date of birth in YYYY-MM-DD format
         String day = _selectedDay.padLeft(2, '0');
         String month;
@@ -260,7 +258,6 @@ class _BirthdayScreenState extends State<BirthdayScreen> {
         }
         String year = _selectedYear;
         widget.userData!.dateOfBirth = "$year-$month-$day";
-        
 
         // Navigate to user signup screen with all collected data
         Navigator.push(
@@ -511,11 +508,12 @@ class _BirthdayScreenState extends State<BirthdayScreen> {
                                               border: Border(
                                                 top: BorderSide(
                                                   color: AppColors.lightTeal
-                                                      .withOpacity(0.3),
+                                                      .withOpacity(0.6),
                                                   width: 2.h,
                                                 ),
                                                 bottom: BorderSide(
-                                                  color: AppColors.lightTeal,
+                                                  color: AppColors.lightTeal
+                                                      .withOpacity(0.6),
                                                   width: 2.h,
                                                 ),
                                               ),

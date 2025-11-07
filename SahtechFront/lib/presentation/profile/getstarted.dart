@@ -22,14 +22,15 @@ class _GetstartedState extends State<Getstarted> {
     double logoHeight = isLandscape ? 30.h : (isSmallScreen ? 35.h : 40.h);
     double imageWidth = isLandscape ? 0.5.sw : (isSmallScreen ? 0.6.sw : 0.7.sw);
     double imageHeight = isLandscape ? 0.25.sh : (isSmallScreen ? 0.3.sh : 0.4.sh);
-    double titleFontSize = isLandscape ? 18.sp : (isSmallScreen ? 20.sp : 22.sp);
-    double subtitleFontSize = isLandscape ? 14.sp : (isSmallScreen ? 14.sp : 16.sp);
-    double verticalPadding = isLandscape ? 10.h : (isSmallScreen ? 15.h : 20.h);
+    double titleFontSize = isLandscape ? 20.sp : (isSmallScreen ? 22.sp : 24.sp);
+    double subtitleFontSize = isLandscape ? 14.sp : (isSmallScreen ? 15.sp : 16.sp);
+    double verticalPadding = isLandscape ? 15.h : (isSmallScreen ? 20.h : 24.h);
     double buttonPadding = isLandscape ? 12.h : (isSmallScreen ? 14.h : 16.h);
-    double spacing = isLandscape ? 8.h : (isSmallScreen ? 8.h : 10.h);
-    double bottomSpacing = isLandscape ? 12.h : (isSmallScreen ? 15.h : 20.h);
+    double spacing = isLandscape ? 8.h : (isSmallScreen ? 12.h : 16.h);
+    double bottomSpacing = isLandscape ? 15.h : (isSmallScreen ? 18.h : 24.h);
     
     return Scaffold(
+      backgroundColor: Colors.white, // Ensure the entire screen has a white background
       body: SingleChildScrollView(  // Add SingleChildScrollView to prevent overflow
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -40,7 +41,9 @@ class _GetstartedState extends State<Getstarted> {
               // Top section with green background, logo and illustration
               Container(
                 width: double.infinity,
-                height: isLandscape ? 0.6 * screenSize.height : 0.7 * screenSize.height, // Use fixed height based on screen
+                height: isLandscape 
+                  ? 0.55 * screenSize.height 
+                  : (screenSize.height < 700 ? 0.65 * screenSize.height : 0.7 * screenSize.height), // Use adaptive height based on screen
                 decoration: BoxDecoration(
                   color: const Color(0xFF9FE870).withOpacity(0.7),
                   borderRadius: BorderRadius.only(
@@ -63,6 +66,7 @@ class _GetstartedState extends State<Getstarted> {
 
                       // Area for the main illustration
                       Flexible(  // Use Flexible instead of Expanded to allow shrinking
+                        flex: 2,
                         child: Center(
                           child: FittedBox(
                             fit: BoxFit.contain,
@@ -86,6 +90,7 @@ class _GetstartedState extends State<Getstarted> {
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: verticalPadding),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Title text
                     Text(
@@ -113,8 +118,10 @@ class _GetstartedState extends State<Getstarted> {
                     SizedBox(height: bottomSpacing),
 
                     // Get Started button
-                    SizedBox(
+                    Container(
                       width: double.infinity,
+                      height: 56.h, // Fixed height for consistency across devices
+                      margin: EdgeInsets.only(top: 8.h, bottom: 8.h),
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pushReplacement(
@@ -127,7 +134,6 @@ class _GetstartedState extends State<Getstarted> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF9FE870),
                           foregroundColor: Colors.black87,
-                          padding: EdgeInsets.symmetric(vertical: buttonPadding),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.r),

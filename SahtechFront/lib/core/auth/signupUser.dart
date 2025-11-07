@@ -399,7 +399,7 @@ class _SignupUserState extends State<SignupUser> {
                                           ],
                                         ),
 
-                                        SizedBox(height: 8.h),
+                                        SizedBox(height: 16.h),
 
                                         // Nom field (Last name)
                                         Column(
@@ -434,7 +434,7 @@ class _SignupUserState extends State<SignupUser> {
                                           ],
                                         ),
 
-                                        SizedBox(height: 8.h),
+                                        SizedBox(height: 16.h),
 
                                         // Email field
                                         Column(
@@ -471,7 +471,7 @@ class _SignupUserState extends State<SignupUser> {
                                           ],
                                         ),
 
-                                        SizedBox(height: 8.h),
+                                        SizedBox(height: 16.h),
 
                                         // Password field
                                         Column(
@@ -509,7 +509,7 @@ class _SignupUserState extends State<SignupUser> {
                                           ],
                                         ),
 
-                                        SizedBox(height: 8.h),
+                                        SizedBox(height: 16.h),
 
                                         // Confirm Password field
                                         Column(
@@ -572,8 +572,8 @@ class _SignupUserState extends State<SignupUser> {
 
                                         // Sign up with Google button
                                         Container(
-                                          width: double.infinity,
-                                          height: 48.h,
+                                          width: 370.w, // Same width as other elements
+                                          height: 54.h, // Same height as other elements
                                           child: ElevatedButton(
                                             onPressed: () {
                                               // Google sign-up logic will be implemented here
@@ -658,37 +658,41 @@ class _SignupUserState extends State<SignupUser> {
     required Function(String) onChanged,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return Container(
-      height: 42.h,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(
-          color: errorText != null ? Colors.red : Colors.transparent,
-          width: 1.5,
-        ),
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        onChanged: onChanged,
-        style: TextStyle(fontSize: 14.sp),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 14.sp,
+    return SizedBox(
+      width: 370.w,
+      height: 54.h,
+      child: Container(
+        height: 54.h,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(30.r),
+          border: Border.all(
+            color: errorText != null ? Colors.red : Colors.transparent,
+            width: 1.5,
           ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-            vertical: 10.h,
-          ),
-          border: InputBorder.none,
-          errorStyle: TextStyle(height: 0, fontSize: 0),
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
         ),
-        validator: (_) => null,
+        child: TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          onChanged: onChanged,
+          style: TextStyle(fontSize: 14.sp),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14.sp,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+              vertical: 16.h, // Increased vertical padding
+            ),
+            border: InputBorder.none,
+            errorStyle: TextStyle(height: 0, fontSize: 0),
+            errorBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
+          ),
+          validator: (_) => null,
+        ),
       ),
     );
   }
@@ -702,47 +706,51 @@ class _SignupUserState extends State<SignupUser> {
     required VoidCallback toggleVisibility,
     required Function(String) onChanged,
   }) {
-    return Container(
-      height: 42.h,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(
-          color: errorText != null ? Colors.red : Colors.transparent,
-          width: 1.5,
+    return SizedBox(
+      width: 370.w,
+      height: 54.h,
+      child: Container(
+        height: 54.h,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(30.r),
+          border: Border.all(
+            color: errorText != null ? Colors.red : Colors.transparent,
+            width: 1.5,
+          ),
         ),
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        onChanged: onChanged,
-        style: TextStyle(fontSize: 14.sp),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 14.sp,
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-            vertical: 10.h,
-          ),
-          border: InputBorder.none,
-          errorStyle: TextStyle(height: 0, fontSize: 0),
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          suffixIcon: IconButton(
-            icon: Icon(
-              obscureText ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey[600],
-              size: 18.w,
+        child: TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          onChanged: onChanged,
+          style: TextStyle(fontSize: 14.sp),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14.sp,
             ),
-            onPressed: toggleVisibility,
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+              vertical: 16.h, // Increased vertical padding
+            ),
+            border: InputBorder.none,
+            errorStyle: TextStyle(height: 0, fontSize: 0),
+            errorBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
+            suffixIcon: IconButton(
+              icon: Icon(
+                obscureText ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey[600],
+                size: 18.w,
+              ),
+              onPressed: toggleVisibility,
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
+            ),
           ),
+          validator: (_) => null,
         ),
-        validator: (_) => null,
       ),
     );
   }

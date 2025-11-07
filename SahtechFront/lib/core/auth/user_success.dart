@@ -43,6 +43,27 @@ class _UserSuccessState extends State<UserSuccess> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions and orientation
+    Size screenSize = MediaQuery.of(context).size;
+    bool isLandscape = screenSize.width > screenSize.height;
+    bool isSmallScreen = screenSize.height < 700;
+
+    // Define responsive values based on screen size and orientation
+    double iconSize = isLandscape ? 80.w : (isSmallScreen ? 100.w : 120.w);
+    double titleFontSize =
+        isLandscape ? 20.sp : (isSmallScreen ? 22.sp : 24.sp);
+    double subtitleFontSize =
+        isLandscape ? 14.sp : (isSmallScreen ? 15.sp : 16.sp);
+    double verticalPadding = isLandscape ? 16.h : (isSmallScreen ? 20.h : 24.h);
+    double verticalSpacing = isLandscape ? 16.h : (isSmallScreen ? 20.h : 32.h);
+    double bottomSpacing = isLandscape ? 24.h : (isSmallScreen ? 30.h : 48.h);
+    double buttonPadding = isLandscape ? 12.h : (isSmallScreen ? 14.h : 16.h);
+    double buttonFontSize =
+        isLandscape ? 14.sp : (isSmallScreen ? 15.sp : 16.sp);
+    double topPadding = isLandscape ? 20.h : (isSmallScreen ? 24.h : 30.h);
+    double logoHeight =
+        isLandscape ? kToolbarHeight * 0.6 : kToolbarHeight * 0.7;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -51,12 +72,7 @@ class _UserSuccessState extends State<UserSuccess> {
         toolbarHeight: kToolbarHeight + 10.h,
         automaticallyImplyLeading: false,
         title: Padding(
-          padding: EdgeInsets.only(top: 30.h),
-          child: Image.asset(
-            'lib/assets/images/mainlogo.jpg',
-            height: kToolbarHeight * 0.7,
-            fit: BoxFit.contain,
-          ),
+          padding: EdgeInsets.only(top: topPadding),
         ),
         centerTitle: true,
       ),
@@ -64,75 +80,75 @@ class _UserSuccessState extends State<UserSuccess> {
           ? Center(child: CircularProgressIndicator(color: AppColors.lightTeal))
           : Stack(
               children: [
-                // Confetti Background with programmatically drawn pattern
+                // Full-screen white background with confetti pattern
                 Container(
-                  color: Colors.white,
                   width: double.infinity,
                   height: double.infinity,
+                  color: Colors.white,
                   child: CustomPaint(
                     painter: ConfettiPainter(),
                   ),
                 ),
-
-                // Main Content with better vertical centering
-                SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Success icon
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: AppColors.lightTeal,
-                          size: 120.w,
-                        ),
-                        SizedBox(height: 32.h),
-
-                        // Success message with new text
-                        Text(
-                          "Votre compte a été créé avec succès",
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                // Scrollable content over the confetti background
+                SingleChildScrollView(
+                  child: SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.all(verticalPadding),
+                      child: Column(
+                        children: [
+                          // Success icon
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: AppColors.lightTeal,
+                            size: iconSize,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          "Merci pour nous faire confiance et partager vous donner avec nous",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Colors.grey[600],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 48.h),
+                          SizedBox(height: verticalSpacing),
 
-                        // Get started button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _goToHome,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.lightTeal,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.r),
+                          // Success message with new text
+                          Text(
+                            "Votre compte a été créé avec succès",
+                            style: TextStyle(
+                              fontSize: titleFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: verticalPadding),
+                          Text(
+                            "Merci pour nous faire confiance et partager vous donner avec nous",
+                            style: TextStyle(
+                              fontSize: subtitleFontSize,
+                              color: Colors.grey[600],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 135.h), // Increased spacing to push button lower (moved ~35px from current place)
+                          // Get started button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _goToHome,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.lightTeal,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: buttonPadding),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.r),
+                                ),
+                              ),
+                              child: Text(
+                                "Continuer",
+                                style: TextStyle(
+                                  fontSize: buttonFontSize,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                            child: Text(
-                              "Continuer",
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
