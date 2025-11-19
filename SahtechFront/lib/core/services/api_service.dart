@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/utils/models/nutritioniste_model.dart';
 import 'package:sahtech/core/utils/models/ad_model.dart';
 import 'package:sahtech/core/utils/models/product_model.dart';
@@ -17,8 +18,7 @@ class ApiService {
   ApiService._internal();
 
   // API base URL
-  final String _baseUrl = 'http://10.0.2.2:8080/API/Sahtech';
-  String get baseUrl => _baseUrl;
+  String get baseUrl => config.baseUrl;
 
   // ===== Auth and local storage helpers =====
 
@@ -45,7 +45,7 @@ class ApiService {
   Future<dynamic> get(String endpoint) async {
     final token = await _getToken();
     final response = await http.get(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('${config.baseUrl}/$endpoint'),
       headers: {
         'Content-Type': 'application/json',
         if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
@@ -61,7 +61,7 @@ class ApiService {
   Future<dynamic> post(String endpoint, Map<String, dynamic> data) async {
     final token = await _getToken();
     final response = await http.post(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('${config.baseUrl}/$endpoint'),
       headers: {
         'Content-Type': 'application/json',
         if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
@@ -78,7 +78,7 @@ class ApiService {
   Future<dynamic> put(String endpoint, Map<String, dynamic> data) async {
     final token = await _getToken();
     final response = await http.put(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('${config.baseUrl}/$endpoint'),
       headers: {
         'Content-Type': 'application/json',
         if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
@@ -95,7 +95,7 @@ class ApiService {
   Future<dynamic> delete(String endpoint) async {
     final token = await _getToken();
     final response = await http.delete(
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('${config.baseUrl}/$endpoint'),
       headers: {
         'Content-Type': 'application/json',
         if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
@@ -121,7 +121,7 @@ class ApiService {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('$_baseUrl/$endpoint'),
+      Uri.parse('${config.baseUrl}/$endpoint'),
     );
     request.headers['Authorization'] = 'Bearer $token';
     request.files.add(await http.MultipartFile.fromPath(fileField, filePath));
@@ -158,7 +158,7 @@ class ApiService {
       }
 
       final token = await _getToken();
-      final String url = '$_baseUrl/Nutrisionistes/All';
+      final String url = '${config.baseUrl}/Nutrisionistes/All';
       final headers = {'Content-Type': 'application/json'};
       if (token != null && token.isNotEmpty) {
         headers['Authorization'] = 'Bearer $token';
@@ -191,7 +191,7 @@ class ApiService {
 
   Future<List<AdModel>> getAdsFromServer() async {
     try {
-      final String adsUrl = '$_baseUrl/Publicites';
+      final String adsUrl = '${config.baseUrl}/Publicites';
       final token = await _getToken();
       final headers = {'Content-Type': 'application/json'};
       if (token != null && token.isNotEmpty) {
@@ -243,7 +243,7 @@ class ApiService {
         return null;
       }
 
-      String productUrl = '$_baseUrl/scan/barcode/$cleanBarcode';
+      String productUrl = '${config.baseUrl}/scan/barcode/$cleanBarcode';
       if (userId != null && userId.isNotEmpty) {
         productUrl += '?userId=$userId';
       }
@@ -281,7 +281,7 @@ class ApiService {
       if (token == null) return null;
 
       String recommendationUrl =
-          '$_baseUrl/recommendation/user/$userId/data?productId=$productId';
+          '${config.baseUrl}/recommendation/user/$userId/data?productId=$productId';
       if (flutterCallbackUrl != null && flutterCallbackUrl.isNotEmpty) {
         final encodedCallback = Uri.encodeComponent(flutterCallbackUrl);
         recommendationUrl += '&flutterCallbackUrl=$encodedCallback';
@@ -351,7 +351,7 @@ class ApiService {
 
   Future<Map<String, dynamic>?> getUserHealthProfile(String userId) async {
     try {
-      final String userUrl = '$_baseUrl/users/$userId/health-profile';
+      final String userUrl = '${config.baseUrl}/users/$userId/health-profile';
       final response = await http.get(Uri.parse(userUrl), headers: {
         'Content-Type': 'application/json'
       }).timeout(const Duration(seconds: 5));
@@ -366,7 +366,7 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> getUserScannedProducts(
       String userId) async {
-    final String url = '$_baseUrl/HistoriqueScan/utilisateur/$userId';
+    final String url = '${config.baseUrl}/HistoriqueScan/utilisateur/$userId';
     try {
       final token = await _getToken();
       final headers = {'Content-Type': 'application/json'};
@@ -395,7 +395,7 @@ class ApiService {
 
   Future<void> debugCheckBarcode(String barcode) async {
     try {
-      final String checkUrl = '$_baseUrl/scan/check/$barcode';
+      final String checkUrl = '${config.baseUrl}/scan/check/$barcode';
       await http.get(Uri.parse(checkUrl), headers: {
         'Content-Type': 'application/json'
       }).timeout(const Duration(seconds: 5));

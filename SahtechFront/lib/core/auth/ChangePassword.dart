@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/theme/colors.dart';
 import 'package:sahtech/core/services/auth_service.dart';
 import 'package:sahtech/core/services/storage_service.dart';
@@ -123,7 +124,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
       // Prepare request data
       final url =
-          '${AuthService.apiBaseUrl}/API/Sahtech/Utilisateurs/$userId/changePassword';
+          '${config.baseUrl}/Utilisateurs/$userId/changePassword';
       final body = jsonEncode({
         'currentPassword': _currentPasswordController.text,
         'newPassword': _newPasswordController.text,

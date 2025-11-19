@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/theme/colors.dart';
 import 'package:sahtech/core/utils/models/nutritioniste_model.dart';
 import 'package:sahtech/core/services/translation_service.dart';
@@ -244,7 +245,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
       // Try server connectivity first
      
       try {
-        final testUrl = 'http://10.0.2.2:8080/health';
+        final testUrl = '${config.baseUrl}/health';
         final testResponse = await http
             .get(Uri.parse(testUrl))
             .timeout(const Duration(seconds: 5));
@@ -306,8 +307,8 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
 
       // Create API request for registration
       // Try different API URL formats in case the current one is incorrect
-      final primaryApiUrl = 'http://10.0.2.2:8080/API/Sahtech/auth/register';
-      final fallbackApiUrl = 'http://10.0.2.2:8080/api/auth/register';
+      final primaryApiUrl = '${config.baseUrl}/auth/register';
+      final fallbackApiUrl = '${config.baseUrl}/auth/register';
 
       
       // Convert to map and print for debugging
@@ -521,11 +522,11 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
       
       // Try different API URL formats
       final primaryApiUrl =
-          'http://localhost:8080/API/Sahtech/Nutrisionistes/$userId/uploadPhotoDiplome';
+          '${config.baseUrl}/Nutrisionistes/$userId/uploadPhotoDiplome';
       final fallbackApiUrl =
-          'http://localhost:8080/api/nutritionist/$userId/uploadDiploma';
+          '${config.baseUrl}/Nutrisionistes/$userId/uploadPhotoDiplome';
       final fallbackApiUrl2 =
-          'http://localhost:8080/api/nutritionists/$userId/upload-diploma';
+          '${config.baseUrl}/Nutrisionistes/$userId/uploadPhotoDiplome';
 
      
 

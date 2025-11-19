@@ -1,17 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/utils/models/user_model.dart';
 import 'package:sahtech/core/services/storage_service.dart';
 
 class AuthService {
   // Spring Boot API endpoint
-  static const String apiBaseUrl =
-      // final String _baseUrl = 'http://192.168.144.26:8080/API/Sahtech'; hada li yatbadal
-      // final String _baseUrl = 'http://192.168.144.26:8080/API/Sahtech'; hada li yatbadal
-      // Use the Android emulator host mapping (no spaces): 10.0.2.2:8080
-      // For Genymotion use 10.0.3.2, for a physical device use the host machine IP address.
-      // NOTE: avoid accidental spaces like "10.0.2.2 :8080" which produce invalid URLs.
-      'http://10.0.2.2:8080';
+  static String get apiBaseUrl => config.baseUrl;
   final StorageService _storageService = StorageService();
 
   // Registration method
@@ -40,12 +35,9 @@ class AuthService {
         headers['Authorization'] = 'Bearer $existingToken';
       }
 
-      // Log the full URL for debugging
-      final registerUrl = '$apiBaseUrl/API/Sahtech/auth/register';
-
       // Make API call to Spring Boot backend
       final response = await http.post(
-        Uri.parse(registerUrl),
+        Uri.parse('${config.baseUrl}/auth/register'),
         headers: headers,
         body: json.encode(userData),
       );
@@ -115,7 +107,7 @@ class AuthService {
       // Make API call to Spring Boot backend
       final response = await http
           .post(
-            Uri.parse('$apiBaseUrl/API/Sahtech/auth/login'),
+            Uri.parse('${config.baseUrl}/auth/login'),
             headers: {
               'Content-Type': 'application/json',
             },
@@ -220,7 +212,7 @@ class AuthService {
         try {
           response = await http
               .get(
-                Uri.parse('$apiBaseUrl/API/Sahtech/Utilisateurs/$userId'),
+                Uri.parse('${config.baseUrl}/Utilisateurs/$userId'),
                 headers: headers,
               )
               .timeout(const Duration(seconds: 15));
@@ -321,7 +313,7 @@ class AuthService {
 
         final response = await http
             .post(
-              Uri.parse('$apiBaseUrl/API/Sahtech/auth/logout'),
+              Uri.parse('${config.baseUrl}/auth/logout'),
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',

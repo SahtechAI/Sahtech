@@ -1,7 +1,8 @@
-/*import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/utils/models/nutritioniste_model.dart';
 import 'package:sahtech/core/utils/models/ad_model.dart';
 import 'package:sahtech/core/utils/models/product_model.dart';
@@ -31,11 +32,8 @@ class MockApiService {
   final Map<String, List<ProductModel>> _userProductsMap = {};
 
   // Spring Boot API base URL
-  // Updated IP address to match working endpoint seen in logs
-  final String _baseUrl =
-      'http://10.0.2.2:8080/API/Sahtech'; // Using the IP that works for user data
   /// Public getter for the base URL (read-only)
-  String get baseUrl => _baseUrl;
+  String get baseUrl => config.baseUrl;
 
   // Alternative URLs for different environments:
   // final String _baseUrl = 'http://10.0.2.2:8080/API/Sahtech'; // Previous setting that caused timeouts
@@ -103,7 +101,7 @@ class MockApiService {
 
       // Attempt to fetch from server first
       final token = await _getToken();
-      final String url = '$_baseUrl/Nutrisionistes/All';
+      final String url = '${config.baseUrl}/Nutrisionistes/All';
       print('Attempting to fetch nutritionists from server: $url');
 
       final headers = {
@@ -193,7 +191,7 @@ class MockApiService {
       print('===== ADS API REQUEST =====');
       print('Fetching ads from server');
 
-      final String adsUrl = '$_baseUrl/Publicites';
+      final String adsUrl = '${config.baseUrl}/Publicites';
       print('Fetching ads from: $adsUrl');
 
       // Get the authentication token
@@ -294,7 +292,7 @@ class MockApiService {
       }
 
       // Build URL with user ID if available (for immediate AI processing)
-      String productUrl = '$_baseUrl/scan/barcode/$cleanBarcode';
+      String productUrl = '${config.baseUrl}/scan/barcode/$cleanBarcode';
       if (userId != null && userId.isNotEmpty) {
         productUrl += '?userId=$userId';
       }
@@ -397,7 +395,7 @@ class MockApiService {
 
       // Build the URL for recommendation request
       String recommendationUrl =
-          '$_baseUrl/recommendation/user/$userId/data?productId=$productId';
+          '${config.baseUrl}/recommendation/user/$userId/data?productId=$productId';
 
       // Add Flutter callback URL if provided
       if (flutterCallbackUrl != null && flutterCallbackUrl.isNotEmpty) {
@@ -766,7 +764,7 @@ class MockApiService {
       print('===== USER HEALTH PROFILE REQUEST =====');
       print('Fetching health profile for user: $userId');
 
-      final String userUrl = '$_baseUrl/users/$userId/health-profile';
+      final String userUrl = '${config.baseUrl}/users/$userId/health-profile';
       print('Sending request to: $userUrl');
 
       final response = await http.get(
@@ -826,7 +824,7 @@ class MockApiService {
     print('Fetching scanned products for user: $userId');
 
     // Construct the API URL for the endpoint
-    final String url = '$_baseUrl/HistoriqueScan/utilisateur/$userId';
+    final String url = '${config.baseUrl}/HistoriqueScan/utilisateur/$userId';
     print('Fetching data from: $url');
 
     try {
@@ -908,7 +906,7 @@ class MockApiService {
   // Debug method to check if a barcode exists in the database
   Future<void> debugCheckBarcode(String barcode) async {
     try {
-      final String checkUrl = '$_baseUrl/scan/check/$barcode';
+      final String checkUrl = '${config.baseUrl}/scan/check/$barcode';
       print('Debug - Sending check request to: $checkUrl');
 
       final existsResponse = await http.get(
@@ -929,7 +927,7 @@ class MockApiService {
           print('Debug - Product exists according to API: $productExists');
 
           if (productExists) {
-            final String productUrl = '$_baseUrl/scan/barcode/$barcode';
+            final String productUrl = '${config.baseUrl}/scan/barcode/$barcode';
             print('Debug - Product exists, would fetch from: $productUrl');
           }
         } catch (e) {
