@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/utils/models/user_model.dart';
 import 'package:sahtech/core/services/storage_service.dart';
 
 class AuthService {
   // Spring Boot API endpoint
-  static const String apiBaseUrl =
-      // final String _baseUrl = 'http://192.168.144.26:8080/API/Sahtech'; hada li yatbadal
-      'http://192.168.1.69:8080'; // Explicit IP address for testing  hada li yatbadal
-
+  static String get apiBaseUrl => config.baseUrl;
   final StorageService _storageService = StorageService();
 
   // Registration method
@@ -17,39 +15,12 @@ class AuthService {
       // Prepare the user data for registration
       final Map<String, dynamic> userData = user.toAuthMap();
 
-      // Enhanced DEBUG logging - Show complete user data details
-      print('--- REGISTRATION DATA DETAILS ---');
-      print('Name: ${user.name}');
-      print('Email: ${user.email}');
-      print('User Type: ${user.userType}');
-      print('Has Chronic Disease: ${user.hasChronicDisease}');
-      print('Chronic Conditions: ${user.chronicConditions}');
-      print('Has Allergies: ${user.hasAllergies}');
-      print('Allergies: ${user.allergies}');
-      print('Does Exercise: ${user.doesExercise}');
-      print('Health Goals: ${user.healthGoals}');
-      print('Height: ${user.height}, Weight: ${user.weight}');
-      print('Date of Birth: ${user.dateOfBirth}');
-      print('PhotoUrl: ${user.photoUrl}');
-      print('--- END REGISTRATION DATA DETAILS ---');
-
-      // Check explicitly if photoUrl is in the userData map
-      print('Is photoUrl in userData map? ${userData.containsKey("photoUrl")}');
-      print('photoUrl value in userData: ${userData["photoUrl"]}');
-
       // Force add photoUrl directly to ensure it's in the request
       userData['photoUrl'] = user.photoUrl ?? "";
-      print(
-          'After force adding - Is photoUrl in userData map? ${userData.containsKey('photoUrl')}');
-      print('photoUrl value: "${userData['photoUrl']}"');
-
-      // DEBUG: Print request payload as JSON
-      print('Sending registration data: ${json.encode(userData)}');
 
       // Extra debug: Print request keys in sorted order
       List<String> keys = userData.keys.toList();
       keys.sort();
-      print('Registration data keys (sorted): $keys');
 
       // Try to get any existing token (if user is already logged in)
       final String? existingToken = await _storageService.getToken();
@@ -64,32 +35,18 @@ class AuthService {
         headers['Authorization'] = 'Bearer $existingToken';
       }
 
-      // Log the full URL for debugging
-      final registerUrl = '$apiBaseUrl/API/Sahtech/auth/register';
-      print('Sending registration request to: $registerUrl');
-      print('With headers: $headers');
-
       // Make API call to Spring Boot backend
       final response = await http.post(
-        Uri.parse(registerUrl),
+        Uri.parse('${config.baseUrl}/auth/register'),
         headers: headers,
         body: json.encode(userData),
       );
 
-      // DEBUG: Print response
-      print('Registration response status: ${response.statusCode}');
-      print('Registration response body: ${response.body}');
-
       // Enhanced error logging
       if (response.statusCode != 200 && response.statusCode != 201) {
-        print('Registration failed with status: ${response.statusCode}');
-        print('Response headers: ${response.headers}');
         try {
           final errorData = json.decode(response.body);
-          print('Decoded error response: $errorData');
-        } catch (e) {
-          print('Could not decode error response: ${response.body}');
-        }
+        } catch (e) {}
       }
 
       // Check response
@@ -147,23 +104,16 @@ class AuthService {
         'userType': userType,
       };
 
-      // DEBUG: Print login data
-      print('Sending login data: ${json.encode(loginData)}');
-
       // Make API call to Spring Boot backend
       final response = await http
           .post(
-            Uri.parse('$apiBaseUrl/API/Sahtech/auth/login'),
+            Uri.parse('${config.baseUrl}/auth/login'),
             headers: {
               'Content-Type': 'application/json',
             },
             body: json.encode(loginData),
           )
           .timeout(const Duration(seconds: 15)); // Add timeout
-
-      // DEBUG: Print response
-      print('Login response status: ${response.statusCode}');
-      print('Login response body: ${response.body}');
 
       // Check response
       if (response.statusCode == 200) {
@@ -247,18 +197,11 @@ class AuthService {
         return null;
       }
 
-      print(
-          'Fetching user data from API: $apiBaseUrl/API/Sahtech/Utilisateurs/$userId');
-      print(
-          'Using token: ${token.length > 10 ? token.substring(0, 10) + '...' : token}');
-
       // Ensure proper formatting of the request with Bearer token
       final Map<String, String> headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
-
-      print('Request headers: $headers');
 
       // Add retries for network stability
       int maxRetries = 3;
@@ -269,7 +212,7 @@ class AuthService {
         try {
           response = await http
               .get(
-                Uri.parse('$apiBaseUrl/API/Sahtech/Utilisateurs/$userId'),
+                Uri.parse('${config.baseUrl}/Utilisateurs/$userId'),
                 headers: headers,
               )
               .timeout(const Duration(seconds: 15));
@@ -278,7 +221,7 @@ class AuthService {
           break;
         } catch (e) {
           retryCount++;
-          print('Request attempt $retryCount failed: $e');
+
           if (retryCount >= maxRetries) rethrow;
 
           // Wait before retrying (exponential backoff)
@@ -291,20 +234,14 @@ class AuthService {
             'Failed to make HTTP request after $maxRetries attempts');
       }
 
-      print('GET user data response status: ${response.statusCode}');
-      print('GET user data response body: ${response.body}');
-
       if (response.statusCode == 200) {
         // Parse the response body
         final Map<String, dynamic> userData;
         try {
           userData = json.decode(response.body);
         } catch (e) {
-          print('Error parsing user data JSON: $e');
           return null;
         }
-
-        print('User data successfully parsed: ${userData.keys.toList()}');
 
         // Try to create a UserModel from the response
         try {
@@ -322,25 +259,18 @@ class AuthService {
           }
 
           // Debug photoUrl
-          print(
-              'User data contains photoUrl: ${userData.containsKey('photoUrl')}');
+
           if (userData.containsKey('photoUrl')) {
-            print('photoUrl from API: ${userData['photoUrl']}');
             // Make sure the photoUrl is set if photoUrl is available
             if (user.photoUrl == null && userData['photoUrl'] != null) {
               user.photoUrl = userData['photoUrl'];
-              print('Set photoUrl from photoUrl: ${user.photoUrl}');
             }
           }
 
           // Log the user data for debugging
-          print(
-              'User model created: ${user.name} (${user.email}), ID: ${user.userId}, Type: ${user.userType}, Profile Image: ${user.photoUrl}');
 
           return user;
         } catch (e) {
-          print('Error creating user model from data: $e');
-
           // Fallback: Create a minimal user model with the basic data we have
           final fallbackUser = UserModel(
             userType: userType ?? 'USER',
@@ -351,21 +281,16 @@ class AuthService {
             email: userData['email'],
           );
 
-          print('Created fallback user model: ${fallbackUser.name}');
           return fallbackUser;
         }
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        print('Authentication error: ${response.statusCode}');
         // Token might be expired, try to clear auth data
         await _storageService.clearAuthData();
         return null;
       } else {
-        print(
-            'Error getting user data: ${response.statusCode}, ${response.body}');
         return null;
       }
     } catch (e) {
-      print('Exception getting user data: $e');
       return null;
     }
   }
@@ -377,7 +302,6 @@ class AuthService {
       final String? userId = await _storageService.getUserId();
 
       if (token == null) {
-        print('No token to logout');
         await _storageService.clearAuthData();
         return true;
       }
@@ -387,11 +311,9 @@ class AuthService {
         // Create a proper LogoutRequest body as required by the backend
         final logoutRequestBody = {'token': token, 'userId': userId};
 
-        print('Sending logout request: ${json.encode(logoutRequestBody)}');
-
         final response = await http
             .post(
-              Uri.parse('$apiBaseUrl/API/Sahtech/auth/logout'),
+              Uri.parse('${config.baseUrl}/auth/logout'),
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',
@@ -400,10 +322,6 @@ class AuthService {
             )
             .timeout(
                 const Duration(seconds: 10)); // Add timeout directly to request
-
-        // DEBUG: Print response
-        print('Logout response status: ${response.statusCode}');
-        print('Logout response body: ${response.body}');
 
         // Regardless of server response, clear local storage
         await _storageService.clearAuthData();

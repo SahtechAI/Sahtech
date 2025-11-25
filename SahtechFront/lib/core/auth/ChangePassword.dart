@@ -1,5 +1,8 @@
+//ChangePassword.dart is for logged-in users changing their password
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/theme/colors.dart';
 import 'package:sahtech/core/services/auth_service.dart';
 import 'package:sahtech/core/services/storage_service.dart';
@@ -58,13 +61,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       final String? userId = await _storageService.getUserId();
       String? token = await _storageService.getToken();
 
-      // Debug info about the token
-      print(
-          'Token status: exists=${token != null}, valid format=${token != null && token.isNotEmpty && token.startsWith('ey')}');
-
       // Verify token and user ID are available
       if (token == null || token.isEmpty || userId == null || userId.isEmpty) {
-        print("Missing token or userId");
         setState(() {
           _errorMessage =
               "Informations d'authentification manquantes. Veuillez vous reconnecter.";
@@ -91,22 +89,17 @@ class _ChangePasswordState extends State<ChangePassword> {
 
             if (expDate.isBefore(now)) {
               tokenMightBeExpired = true;
-              print('Token appears to be expired. Expiry: $expDate, Now: $now');
-            } else {
-              print('Token is valid until: $expDate');
-            }
+            } else {}
           }
         }
       } catch (e) {
-        print('Error checking token expiration: $e');
+        
         // On error, assume we should try to refresh
         tokenMightBeExpired = true;
       }
 
       // If token might be expired, try to refresh or re-login silently
       if (tokenMightBeExpired) {
-        print('Attempting to refresh auth state before password change');
-
         // Try to get stored credentials (you'd need to implement this)
         final String? storedEmail = await _storageService.getEmail();
         final String? storedPassword =
@@ -121,22 +114,17 @@ class _ChangePasswordState extends State<ChangePassword> {
                 userType: await _storageService.getUserType() ?? 'USER');
 
             if (result['success'] == true) {
-              print('Silent re-authentication successful');
               token = await _storageService.getToken(); // Get fresh token
-            } else {
-              print('Silent re-authentication failed: ${result['message']}');
             }
           } catch (e) {
-            print('Error during silent re-authentication: $e');
+            // Ignore silent re-authentication errors
           }
-        } else {
-          print('Cannot refresh: no stored credentials');
         }
       }
 
       // Prepare request data
       final url =
-          '${AuthService.apiBaseUrl}/API/Sahtech/Utilisateurs/$userId/changePassword';
+          '${config.baseUrl}/Utilisateurs/$userId/changePassword';
       final body = jsonEncode({
         'currentPassword': _currentPasswordController.text,
         'newPassword': _newPasswordController.text,
@@ -149,12 +137,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       };
 
       // Send request to backend
-      print('Sending password change request...');
-      print('Request URL: $url');
-      print('Request headers: $headers');
-      print(
-          'Request body: ${body.replaceAll(_currentPasswordController.text, "******").replaceAll(_newPasswordController.text, "******")}');
-
       final response = await http
           .put(
         Uri.parse(url),
@@ -167,11 +149,6 @@ class _ChangePasswordState extends State<ChangePassword> {
           return http.Response('{"error":"Request timed out"}', 408);
         },
       );
-
-      // Debug response info
-      print('Response status code: ${response.statusCode}');
-      print('Response headers: ${response.headers}');
-      print('Response body: ${response.body}');
 
       // Handle response based on status code
       if (response.statusCode == 200) {
@@ -225,7 +202,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             }
           }
         } catch (e) {
-          print('Error parsing response: $e');
+          // Ignore error parsing response
         }
 
         setState(() {
@@ -233,7 +210,6 @@ class _ChangePasswordState extends State<ChangePassword> {
         });
       }
     } catch (e) {
-      print('Exception during password change: $e');
       setState(() {
         _errorMessage = 'Erreur: $e';
       });

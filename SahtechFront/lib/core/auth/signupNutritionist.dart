@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:sahtech/core/config/api_config.dart' as config;
 import 'package:sahtech/core/theme/colors.dart';
 import 'package:sahtech/core/utils/models/nutritioniste_model.dart';
 import 'package:sahtech/core/services/translation_service.dart';
@@ -69,32 +70,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
     super.initState();
 
     // Debug print statements to verify nutritionist data
-    print('=== NUTRITIONIST DATA DEBUG ===');
-    print('User Type: ${widget.nutritionistData.userType}');
-    print('Name: ${widget.nutritionistData.name}');
-    print('Email: ${widget.nutritionistData.email}');
-    print('Phone Number: ${widget.nutritionistData.phoneNumber}');
-    print('Gender: ${widget.nutritionistData.gender}');
-    print('Specialization: ${widget.nutritionistData.specialization}');
-    print('Specialite: ${widget.nutritionistData.specialite}');
-    print(
-        'Proof Attestation Types: ${widget.nutritionistData.proveAttestationType}');
-    print('Diploma Image Path: ${widget.nutritionistData.diplomaImagePath}');
-    print('Cabinet Location: ${widget.nutritionistData.cabinetAddress}');
-    print('Latitude: ${widget.nutritionistData.latitude}');
-    print('Longitude: ${widget.nutritionistData.longitude}');
-    print('Chronic Disease: ${widget.nutritionistData.hasChronicDisease}');
-    print('Chronic Conditions: ${widget.nutritionistData.chronicConditions}');
-    print('Activity Level: ${widget.nutritionistData.activityLevel}');
-    print('Physical Activities: ${widget.nutritionistData.physicalActivities}');
-    print('Health Goals: ${widget.nutritionistData.healthGoals}');
-    print(
-        'Weight: ${widget.nutritionistData.weight} ${widget.nutritionistData.weightUnit}');
-    print(
-        'Height: ${widget.nutritionistData.height} ${widget.nutritionistData.heightUnit}');
-    print('Date of Birth: ${widget.nutritionistData.dateDeNaissance}');
-    print('Preferred Language: ${widget.nutritionistData.preferredLanguage}');
-    print('=== END NUTRITIONIST DATA DEBUG ===');
+    print('=== NUTRITIONIST DATA RECEIVED ===');
 
     // Initialize with existing name data if available
     String firstName = '';
@@ -267,9 +243,9 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
 
     try {
       // Try server connectivity first
-      print('=== TESTING SERVER CONNECTIVITY ===');
+     
       try {
-        final testUrl = 'http://192.168.1.69:8080/health';
+        final testUrl = '${config.baseUrl}/health';
         final testResponse = await http
             .get(Uri.parse(testUrl))
             .timeout(const Duration(seconds: 5));
@@ -312,7 +288,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
           updatedNutritionistData.dateDeNaissance = DateTime.now().subtract(
               const Duration(days: 365 * 30)); // Default to 30 years old
         } catch (e) {
-          print('Could not set default date of birth: $e');
+          
         }
       }
 
@@ -325,41 +301,16 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
       }
 
       // Debug print statements to verify nutritionist data before submission
-      print('=== NUTRITIONIST DATA BEFORE SUBMISSION ===');
-      print('User Type: ${updatedNutritionistData.userType}');
-      print('Full Name: ${updatedNutritionistData.name}');
-      print('Email: ${updatedNutritionistData.email}');
-      print('Phone Number: ${updatedNutritionistData.phoneNumber}');
-      print('Gender: ${updatedNutritionistData.gender}');
-      print('Sexe: ${updatedNutritionistData.sexe}');
-      print('Specialization: ${updatedNutritionistData.specialization}');
-      print('Specialite: ${updatedNutritionistData.specialite}');
-      print('Cabinet Location: ${updatedNutritionistData.cabinetAddress}');
-      print('Latitude: ${updatedNutritionistData.latitude}');
-      print('Longitude: ${updatedNutritionistData.longitude}');
-      print('Diploma Image Path: ${updatedNutritionistData.diplomaImagePath}');
-      print('Diploma Types: ${updatedNutritionistData.proveAttestationType}');
-      print(
-          'Weight: ${updatedNutritionistData.weight} ${updatedNutritionistData.weightUnit}');
-      print(
-          'Height: ${updatedNutritionistData.height} ${updatedNutritionistData.heightUnit}');
-      print('Date of Birth: ${updatedNutritionistData.dateDeNaissance}');
-      print('=== END NUTRITIONIST DATA BEFORE SUBMISSION ===');
-
+      
       // Store the diploma image path for later use
       final String? diplomaImagePath = updatedNutritionistData.diplomaImagePath;
 
       // Create API request for registration
       // Try different API URL formats in case the current one is incorrect
-      final primaryApiUrl =
-          'http://192.168.1.69:8080/API/Sahtech/auth/register';
-      final fallbackApiUrl = 'http://192.168.1.69:8080/api/auth/register';
+      final primaryApiUrl = '${config.baseUrl}/auth/register';
+      final fallbackApiUrl = '${config.baseUrl}/auth/register';
 
-      print('=== SENDING REGISTRATION REQUEST ===');
-      print('Primary API URL: $primaryApiUrl');
-      print('Fallback API URL: $fallbackApiUrl');
-      print('Request Headers: ${{'Content-Type': 'application/json'}}');
-
+      
       // Convert to map and print for debugging
       final requestMap = updatedNutritionistData.toMap();
 
@@ -420,11 +371,11 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
       requestMap['provider'] = 'LOCAL';
 
       // Print request details
-      print('Request Body as Map: $requestMap');
+     
 
       // Convert to JSON and print in chunks to avoid truncation
       final jsonString = jsonEncode(requestMap);
-      print('Request Body as JSON (full):');
+     
 
       // Print in chunks of 500 characters
       for (int i = 0; i < jsonString.length; i += 500) {
@@ -449,9 +400,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
             )
             .timeout(const Duration(seconds: 15));
 
-        print('=== PRIMARY URL RESPONSE ===');
-        print('Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
+        
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           registrationSuccessful = true;
@@ -466,7 +415,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
 
       // If primary URL failed, try fallback URL
       if (!registrationSuccessful) {
-        print('=== TRYING FALLBACK URL ===');
+        
         try {
           response = await http
               .post(
@@ -478,9 +427,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
               )
               .timeout(const Duration(seconds: 15));
 
-          print('=== FALLBACK URL RESPONSE ===');
-          print('Status Code: ${response.statusCode}');
-          print('Response Body: ${response.body}');
+         
 
           if (response.statusCode == 200 || response.statusCode == 201) {
             registrationSuccessful = true;
@@ -501,8 +448,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
         final String userId =
             responseData['id'] ?? '1'; // Use server-provided ID or fallback
 
-        print('=== REGISTRATION SUCCESSFUL ===');
-        print('User ID from response: $userId');
+      
 
         // Create a base UserModel for HomeScreen
         final userData = UserModel(
@@ -515,31 +461,20 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
         // Upload diploma image if available
         if (diplomaImagePath != null && diplomaImagePath.isNotEmpty) {
           try {
-            print('=== STARTING DIPLOMA IMAGE UPLOAD ===');
-            print('User ID: $userId');
-            print('Diploma Image Path: $diplomaImagePath');
-
+           
             await _uploadDiplomaImage(userId, diplomaImagePath);
-            print('=== DIPLOMA IMAGE UPLOAD SUCCESSFUL ===');
+           
           } catch (e) {
-            print('=== DIPLOMA IMAGE UPLOAD FAILED ===');
-            print('Error: ${e.toString()}');
+           
+           
             // Continue with navigation even if image upload fails
             // The user can upload it later from their profile
           }
         } else {
-          print('=== NO DIPLOMA IMAGE TO UPLOAD ===');
+          
         }
 
-        // Debug print statements for final data before navigation
-        print('=== NUTRITIONIST SIGNUP SUCCESSFUL ===');
-        print('Created User ID: ${userData.userId}');
-        print('Final User Type: ${userData.userType}');
-        print('Final Name: ${userData.name}');
-        print('Final Email: ${userData.email}');
-        print('Final Preferred Language: ${userData.preferredLanguage}');
-        print('=== END NUTRITIONIST SIGNUP DATA ===');
-
+       
         // Clear sensitive data
         updatedNutritionistData.password = null;
 
@@ -575,10 +510,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
   // Helper method to upload the diploma image
   Future<void> _uploadDiplomaImage(String userId, String imagePath) async {
     try {
-      print('=== DIPLOMA UPLOAD DETAILS ===');
-      print('User ID: $userId');
-      print('Image Path: $imagePath');
-      print('Diploma Types: ${widget.nutritionistData.proveAttestationType}');
+     
 
       // Create multipart request
       final file = File(imagePath);
@@ -587,26 +519,21 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
         throw Exception('Le fichier image n\'existe pas');
       }
 
-      print('File exists: ${file.existsSync()}');
-      print('File size: ${await file.length()} bytes');
-
+      
       // Try different API URL formats
       final primaryApiUrl =
-          'http://192.168.1.69:8080/API/Sahtech/Nutrisionistes/$userId/uploadPhotoDiplome';
+          '${config.baseUrl}/Nutrisionistes/$userId/uploadPhotoDiplome';
       final fallbackApiUrl =
-          'http://192.168.1.69:8080/api/nutritionist/$userId/uploadDiploma';
+          '${config.baseUrl}/Nutrisionistes/$userId/uploadPhotoDiplome';
       final fallbackApiUrl2 =
-          'http://192.168.1.69:8080/api/nutritionists/$userId/upload-diploma';
+          '${config.baseUrl}/Nutrisionistes/$userId/uploadPhotoDiplome';
 
-      print('Primary Upload API URL: $primaryApiUrl');
-      print('Fallback Upload API URL 1: $fallbackApiUrl');
-      print('Fallback Upload API URL 2: $fallbackApiUrl2');
+     
 
       // Prepare the file data
       final fileStream = http.ByteStream(file.openRead());
       final fileLength = await file.length();
       final mimeType = _getImageMimeType(file.path);
-      print('File MIME type: image/$mimeType');
       final filename = path.basename(file.path);
 
       // Try each URL in sequence
@@ -616,7 +543,7 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
 
       for (int i = 0; i < urls.length; i++) {
         final currentUrl = urls[i];
-        print('Trying URL ${i + 1}/${urls.length}: $currentUrl');
+       
 
         try {
           // Create a multipart request
@@ -632,14 +559,13 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
           );
 
           request.files.add(multipartFile);
-          print('File added to request: $filename');
+         
 
           // Add diploma type information if available
           if (widget.nutritionistData.proveAttestationType.isNotEmpty) {
             request.fields['proveAttestationType'] =
                 widget.nutritionistData.proveAttestationType.join(',');
-            print(
-                'Added diploma types: ${widget.nutritionistData.proveAttestationType.join(',')}');
+           
           }
 
           // Add field name that matches the Java entity
@@ -647,26 +573,24 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
               'true'; // Indicate this is for the diploma photo
 
           // Send the request
-          print('Sending request to $currentUrl...');
+          
           final streamedResponse =
               await request.send().timeout(const Duration(seconds: 15));
           final response = await http.Response.fromStream(streamedResponse);
 
-          print('Response from URL ${i + 1}: Status ${response.statusCode}');
-          print('Response body: ${response.body}');
+          
 
           if (response.statusCode == 200 || response.statusCode == 201) {
-            print('Upload successful with URL ${i + 1}!');
+           
             successResponse = response;
             break;
           } else {
             errorMessage =
                 'Upload failed with URL ${i + 1}: Status ${response.statusCode}, Body: ${response.body}';
-            print(errorMessage);
-
+           
             // If this isn't the last URL, try the next one
             if (i < urls.length - 1) {
-              print('Trying next URL...');
+             
             }
           }
         } catch (e) {
@@ -675,20 +599,20 @@ class _SignupNutritionistState extends State<SignupNutritionist> {
 
           // If this isn't the last URL, try the next one
           if (i < urls.length - 1) {
-            print('Trying next URL due to error...');
+           
           }
         }
       }
 
       if (successResponse != null) {
-        print('=== DIPLOMA UPLOAD SUCCESSFUL ===');
+       
         return;
       } else {
-        print('=== ALL UPLOAD ATTEMPTS FAILED ===');
+        
         throw Exception('Échec du téléchargement du diplôme: $errorMessage');
       }
     } catch (e) {
-      print('Error in _uploadDiplomaImage: $e');
+      
       rethrow; // Rethrow to handle in the calling method
     }
   }

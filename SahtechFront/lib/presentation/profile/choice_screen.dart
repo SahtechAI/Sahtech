@@ -168,265 +168,298 @@ class _ChoiceScreenState extends State<ChoiceScreen>
       );
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 24.h),
+    // Determine screen dimensions
+    Size screenSize = MediaQuery.of(context).size;
+    bool isLandscape = screenSize.width > screenSize.height;
+    bool isSmallScreen = screenSize.height < 700;
+    
+    // Define responsive values
+    double titleFontSize = isLandscape ? 20.sp : (isSmallScreen ? 22.sp : 24.sp);
+    double subtitleFontSize = isLandscape ? 12.sp : (isSmallScreen ? 14.sp : 14.sp);
+    double cardPadding = isLandscape ? 12.h : (isSmallScreen ? 14.h : 16.h);
+    double spacing = isLandscape ? 12.h : (isSmallScreen ? 16.h : 20.h);
+    double bottomSpacing = isLandscape ? 12.h : (isSmallScreen ? 20.h : 24.h);
+    double titleSpacing = isLandscape ? 8.h : (isSmallScreen ? 12.h : 12.h);
+    double betweenCardsSpacing = isLandscape ? 10.h : (isSmallScreen ? 14.h : 16.h);
+    double topPadding = isLandscape ? 16.h : (isSmallScreen ? 20.h : 24.h);
+    double logoHeight = isLandscape ? 35.h : (isSmallScreen ? 35.h : 40.h);
+    double cardIconSize = isLandscape ? 20.w : (isSmallScreen ? 22.w : 22.w);
+    double cardHeight = isLandscape ? 35.w : (isSmallScreen ? 40.w : 40.w);
+    double buttonHeight = isLandscape ? 48.h : (isSmallScreen ? 50.h : 54.h);
+    double textPadding = isLandscape ? 12.w : (isSmallScreen ? 16.w : 16.w);
 
-              // Row for logo and language selector
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Language Selector Button on the left
-                  LanguageSelectorButton(
-                    onLanguageChanged: _handleLanguageChanged,
-                  ),
-
-                  // Logo in the center
-                  Image.asset(
-                    'lib/assets/images/mainlogo.jpg',
-                    height: 40.h,
-                    fit: BoxFit.contain,
-                  ),
-
-                  // Empty container to balance the row
-                  SizedBox(width: 40.w),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
               ),
+              child: IntrinsicHeight(
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: topPadding),
 
-              SizedBox(height: 20.h),
-
-              // Title
-              Center(
-                child: Text(
-                  _translations['title']!,
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 12.h),
-
-              // Subtitle
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Text(
-                    _translations['subtitle']!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey[700],
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 40.h),
-
-              // User Selection Card
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    selectedUserType = 'user';
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: selectedUserType == 'user'
-                          ? const Color(0xFF9FE870)
-                          : Colors.grey.shade200,
-                      width: 1.w,
-                    ),
-                    borderRadius: BorderRadius.circular(16.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: selectedUserType == 'user'
-                            ? const Color(0xFF9FE870).withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.05),
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD5FFB8),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.person_outline,
-                          color: Colors.black87,
-                          size: 22.w,
-                        ),
-                      ),
-                      SizedBox(width: 16.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        // Row for logo and language selector
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              _translations['normalUserTitle']!,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
+                            // Language Selector Button on the left
+                            LanguageSelectorButton(
+                              onLanguageChanged: _handleLanguageChanged,
                             ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              _translations['normalUserDesc']!,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.grey[500],
-                              ),
+
+                            // Logo in the center
+                            Image.asset(
+                              'lib/assets/images/mainlogo.jpg',
+                              height: logoHeight,
+                              fit: BoxFit.contain,
                             ),
+
+                            // Empty container to balance the row
+                            SizedBox(width: 40.w),
                           ],
                         ),
-                      ),
-                      Container(
-                        width: 24.w,
-                        height: 24.w,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD5FFB8),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.black87,
-                          size: 12.w,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
 
-              SizedBox(height: 16.h),
+                        SizedBox(height: spacing),
 
-              // Nutritionist Selection Card
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    selectedUserType = 'nutritionist';
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: selectedUserType == 'nutritionist'
-                          ? const Color(0xFF9FE870)
-                          : Colors.grey.shade200,
-                      width: 1.w,
+                        // Title
+                        Center(
+                          child: Text(
+                            _translations['title']!,
+                            style: TextStyle(
+                              fontSize: titleFontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: titleSpacing),
+
+                        // Subtitle
+                        Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: textPadding),
+                            child: Text(
+                              _translations['subtitle']!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: subtitleFontSize,
+                                color: Colors.grey[700],
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: isLandscape ? 20.h : (isSmallScreen ? 25.h : 40.h)),
+
+                        // User Selection Card
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'user';
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 20.w, vertical: cardPadding),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: selectedUserType == 'user'
+                                    ? const Color(0xFF9FE870)
+                                    : Colors.grey.shade200,
+                                width: 1.w,
+                              ),
+                              borderRadius: BorderRadius.circular(16.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: selectedUserType == 'user'
+                                      ? const Color(0xFF9FE870).withOpacity(0.2)
+                                      : Colors.grey.withOpacity(0.05),
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: cardHeight,
+                                  height: cardHeight,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFD5FFB8),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.person_outline,
+                                    color: Colors.black87,
+                                    size: cardIconSize,
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _translations['normalUserTitle']!,
+                                        style: TextStyle(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        _translations['normalUserDesc']!,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[500],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: 24.w,
+                                  height: 24.w,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFD5FFB8),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.black87,
+                                    size: 12.w,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: betweenCardsSpacing),
+
+                        // Nutritionist Selection Card
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedUserType = 'nutritionist';
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 20.w, vertical: cardPadding),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: selectedUserType == 'nutritionist'
+                                    ? const Color(0xFF9FE870)
+                                    : Colors.grey.shade200,
+                                width: 1.w,
+                              ),
+                              borderRadius: BorderRadius.circular(16.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: selectedUserType == 'nutritionist'
+                                      ? const Color(0xFF9FE870).withOpacity(0.2)
+                                      : Colors.grey.withOpacity(0.05),
+                                  blurRadius: 3,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: cardHeight,
+                                  height: cardHeight,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFD5FFB8),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.medical_information_outlined,
+                                    color: Colors.black87,
+                                    size: cardIconSize,
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _translations['nutritionistTitle']!,
+                                        style: TextStyle(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        _translations['nutritionistDesc']!,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[500],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: 24.w,
+                                  height: 24.w,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFD5FFB8),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.black87,
+                                    size: 12.w,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        Spacer(),
+
+                        // Custom Button for navigation
+                        Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(bottom: bottomSpacing),
+                          child: CustomButton(
+                            text: _translations['continue']!,
+                            onPressed: navigateToNextScreen,
+                            width: 1.sw - 48.w,
+                            height: buttonHeight,
+                          ),
+                        ),
+                      ],
                     ),
-                    borderRadius: BorderRadius.circular(16.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: selectedUserType == 'nutritionist'
-                            ? const Color(0xFF9FE870).withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.05),
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD5FFB8),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.medical_information_outlined,
-                          color: Colors.black87,
-                          size: 22.w,
-                        ),
-                      ),
-                      SizedBox(width: 16.w),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _translations['nutritionistTitle']!,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              _translations['nutritionistDesc']!,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 24.w,
-                        height: 24.w,
-                        decoration: BoxDecoration(
-                          color: Color(0xFFD5FFB8),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.black87,
-                          size: 12.w,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ),
-
-              Spacer(),
-
-              // Custom Button for navigation
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.only(bottom: 24.h),
-                child: CustomButton(
-                  text: _translations['continue']!,
-                  onPressed: navigateToNextScreen,
-                  width: 1.sw - 48.w,
-                  height: 54.h,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

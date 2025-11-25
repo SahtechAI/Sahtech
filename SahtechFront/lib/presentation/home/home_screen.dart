@@ -4,7 +4,7 @@ import 'package:sahtech/core/theme/colors.dart';
 import 'package:sahtech/core/utils/models/user_model.dart';
 import 'package:sahtech/core/utils/models/nutritioniste_model.dart';
 import 'package:sahtech/core/utils/models/ad_model.dart';
-import 'package:sahtech/core/services/mock_api_service.dart';
+import 'package:sahtech/core/services/api_service.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -42,8 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _scannedProductsCount = 0;
   bool _isLoading = true;
 
-  // Mock API service
-  final MockApiService _apiService = MockApiService();
+  // API service
+  final ApiService _apiService = ApiService();
 
   // Timer for periodic refresh
   Timer? _refreshTimer;
@@ -131,54 +131,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Load nutritionists from API endpoint
+      // Load nutritionists using the MockApiService (which will try server and fall back to cache/mock)
       List<NutritionisteModel> nutritionists = [];
       try {
-        // Get the authentication token
-        final StorageService storageService = StorageService();
-        final String? token = await storageService.getToken();
-
-        print(
-            'Fetching nutritionists with auth token: ${token != null ? 'Yes (length: ${token.length})' : 'No token available'}');
-
-        final response = await http.get(
-          Uri.parse('http://192.168.1.69:8080/API/Sahtech/Nutrisionistes/All'),
-          headers: {
-            'Content-Type': 'application/json',
-            if (token != null) 'Authorization': 'Bearer $token',
-          },
-        );
-
-        print('Nutritionists API response status: ${response.statusCode}');
-
-        if (response.statusCode == 200) {
-          final List<dynamic> nutritionistsJson = json.decode(response.body);
-          print('API Response: ${response.body}');
-          nutritionists = nutritionistsJson
-              .map((json) => NutritionisteModel.fromMap(json))
-              .toList();
-          print('Fetched ${nutritionists.length} nutritionists from API');
-
-          // Debug each nutritionist
-          for (var i = 0; i < nutritionists.length; i++) {
-            print('Nutritionist $i:');
-            print('  ID: ${nutritionists[i].id}');
-            print('  Name: ${nutritionists[i].name}');
-            print('  Photo URL: ${nutritionists[i].photoUrl}');
-            print('  Specialite: ${nutritionists[i].specialite}');
-            print('  Cabinet Address: ${nutritionists[i].cabinetAddress}');
-            print(
-                '  Phone: ${nutritionists[i].phoneNumber} (${nutritionists[i].numTelephone})');
-          }
-        } else {
-          print('Error fetching nutritionists: ${response.statusCode}');
-          print('Error response body: ${response.body}');
-          // Fallback to mock API if the server request fails
-          nutritionists = await _apiService.getNutritionists();
-        }
+        nutritionists = await _apiService.getNutritionists();
       } catch (e) {
-        print('Exception when fetching nutritionists: $e');
-        // Fallback to mock API if the server request fails
+        print('Exception when fetching nutritionists via service: $e');
         nutritionists = await _apiService.getNutritionists();
       }
 
@@ -275,24 +233,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final hasRequested = await storageService.getCameraPermissionRequested();
     final status = await Permission.camera.status;
 
-    print(
-        'Home: Camera permission status: $status, previously requested: $hasRequested');
-
     if (status.isGranted) {
       // Permission already granted, go directly to scanner
-      print('Home: Camera permission already granted, navigating to scanner');
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => const ProductScannerScreen(),
         ),
       ).then((_) {
-        print('Returned from scan screen, refreshing data...');
         _loadData();
       });
     } else if (!hasRequested) {
       // First time requesting permission
-      print('Home: First time requesting camera permission');
+
       final result = await Permission.camera.request();
       await storageService.setCameraPermissionRequested(true);
 
@@ -303,7 +257,6 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context) => const ProductScannerScreen(),
           ),
         ).then((_) {
-          print('Returned from scan screen, refreshing data...');
           _loadData();
         });
       } else {
@@ -385,7 +338,6 @@ class _HomeScreenState extends State<HomeScreen> {
       // Try to launch the phone dialer
       if (await canLaunchUrl(phoneUri)) {
         await launchUrl(phoneUri);
-        print('Launched phone dialer with number: $formattedNumber');
 
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -398,7 +350,6 @@ class _HomeScreenState extends State<HomeScreen> {
           content: Text('Impossible d\'ouvrir l\'application téléphone'),
           backgroundColor: Colors.red,
         ));
-        print('Could not launch phone dialer: $phoneUri');
       }
     } catch (e) {
       // Handle any errors
@@ -406,22 +357,18 @@ class _HomeScreenState extends State<HomeScreen> {
         content: Text('Erreur lors de l\'appel: $e'),
         backgroundColor: Colors.red,
       ));
-      print('Error launching phone dialer: $e');
     }
   }
 
   // Navigate to nutritionist details
   void _navigateToNutritionistDetails(NutritionisteModel nutritionist) {
-    // Get the nutritionist ID
-    final nutritionistId = nutritionist.userId ?? nutritionist.id;
-
-    // For now, just show a snackbar
+    // Use nutritionist.userId or nutritionist.id directly when needed
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Détails de ${nutritionist.name}'),
       backgroundColor: AppColors.lightTeal,
     ));
 
-    // TODO: Implement navigation to nutritionist details
+    // TODO: Implement navigation to nutritionist details (use nutritionist.userId ?? nutritionist.id)
   }
 
   // Open ad link
@@ -991,7 +938,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (index == 4) {
           // Profile tab
           // Navigate to profile settings
-          final result = await Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => UserProfileSettings(user: widget.userData),

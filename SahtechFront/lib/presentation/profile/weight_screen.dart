@@ -224,135 +224,47 @@ class _WeightScreenState extends State<WeightScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: AppColors.lightTeal))
           : SafeArea(
-              child: Column(
-                children: [
-                  // Progress Bar (60%)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Container(
-                      height: 4.h,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(2.r),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 1.sw * 0.6 - 3.2.w,
-                            height: 4.h,
-                            decoration: BoxDecoration(
-                              color: AppColors.lightTeal,
-                              borderRadius: BorderRadius.circular(2.r),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Get screen dimensions and orientation
+                  Size screenSize = MediaQuery.of(context).size;
+                  bool isLandscape = screenSize.width > screenSize.height;
 
-                  // Main content
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  // Calculate available height for content
+                  double availableHeight = constraints.maxHeight;
+
+                  // Adjust sizes based on orientation
+                  double titleFontSize = isLandscape ? 18.sp : 24.sp;
+                  double subtitleFontSize = isLandscape ? 12.sp : 14.sp;
+                  double spaceBetweenElements = isLandscape ? 10.h : 20.h;
+                  double topPadding = isLandscape ? 10.h : 32.h;
+                  double textSize = isLandscape ? 40.sp : 70.sp;
+                  double buttonHeight = isLandscape ? 40.h : 50.h;
+
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: availableHeight,
+                      ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 32.h),
-
-                          // Main question
-                          Text(
-                            _translations['title']!,
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-
-                          SizedBox(height: 12.h),
-
-                          // Subtitle/explanation
-                          Text(
-                            _translations['subtitle']!,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[700],
-                              height: 1.4,
-                            ),
-                          ),
-
-                          SizedBox(height: 24.h),
-
-                          // Weight unit selector (kg/lb) - pill style toggle
-                          Center(
+                          // Progress Bar (60%)
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: Container(
-                              width: 120.w,
-                              height: 36.h,
+                              height: 4.h,
                               decoration: BoxDecoration(
                                 color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(20.r),
+                                borderRadius: BorderRadius.circular(2.r),
                               ),
                               child: Row(
                                 children: [
-                                  // lb selector
-                                  GestureDetector(
-                                    onTap: () => _toggleUnit('lb'),
-                                    child: Container(
-                                      width: 60.w,
-                                      height: 36.h,
-                                      decoration: BoxDecoration(
-                                        color: _weightUnit == 'lb'
-                                            ? Colors.white
-                                            : Colors.grey[200],
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                        boxShadow: _weightUnit == 'lb'
-                                            ? [
-                                                BoxShadow(
-                                                  color: Colors.black
-                                                      .withOpacity(0.1),
-                                                  blurRadius: 2,
-                                                  spreadRadius: 0.5,
-                                                ),
-                                              ]
-                                            : null,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'lb',
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // kg selector
-                                  GestureDetector(
-                                    onTap: () => _toggleUnit('kg'),
-                                    child: Container(
-                                      width: 60.w,
-                                      height: 36.h,
-                                      decoration: BoxDecoration(
-                                        color: _weightUnit == 'kg'
-                                            ? AppColors.lightTeal
-                                            : Colors.grey[200],
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'kg',
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                      ),
+                                  Container(
+                                    width: 1.sw * 0.6 - 3.2.w,
+                                    height: 4.h,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.lightTeal,
+                                      borderRadius: BorderRadius.circular(2.r),
                                     ),
                                   ),
                                 ],
@@ -360,165 +272,294 @@ class _WeightScreenState extends State<WeightScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 24.h),
-
-                          // Weight display area with slider
-                          Container(
-                            width: double.infinity,
-                            height: 0.35.sh,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFF9E8),
-                              borderRadius: BorderRadius.circular(15.r),
-                            ),
+                          // Main content
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Weight value display
-                                Container(
-                                  width: 0.5.sw,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      _formatWeight(_weight),
-                                      style: TextStyle(
-                                        fontSize: 80.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                                SizedBox(height: topPadding),
+
+                                // Main question
+                                Text(
+                                  _translations['title']!,
+                                  style: TextStyle(
+                                    fontSize: titleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+
+                                SizedBox(height: 8.h),
+
+                                // Subtitle/explanation
+                                Text(
+                                  _translations['subtitle']!,
+                                  style: TextStyle(
+                                    fontSize: subtitleFontSize,
+                                    color: Colors.grey[700],
+                                    height: 1.4,
+                                  ),
+                                ),
+
+                                SizedBox(height: spaceBetweenElements),
+
+                                // Weight unit selector (kg/lb) - pill style toggle
+                                Center(
+                                  child: Container(
+                                    width: 120.w,
+                                    height:
+                                        30.h, // Smaller height to save space
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // lb selector
+                                        GestureDetector(
+                                          onTap: () => _toggleUnit('lb'),
+                                          child: Container(
+                                            width: 60.w,
+                                            height: 30.h,
+                                            decoration: BoxDecoration(
+                                              color: _weightUnit == 'lb'
+                                                  ? Colors.white
+                                                  : Colors.grey[200],
+                                              borderRadius:
+                                                  BorderRadius.circular(20.r),
+                                              boxShadow: _weightUnit == 'lb'
+                                                  ? [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.1),
+                                                        blurRadius: 2,
+                                                        spreadRadius: 0.5,
+                                                      ),
+                                                    ]
+                                                  : null,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'lb',
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        // kg selector
+                                        GestureDetector(
+                                          onTap: () => _toggleUnit('kg'),
+                                          child: Container(
+                                            width: 60.w,
+                                            height: 30.h,
+                                            decoration: BoxDecoration(
+                                              color: _weightUnit == 'kg'
+                                                  ? AppColors.lightTeal
+                                                  : Colors.grey[200],
+                                              borderRadius:
+                                                  BorderRadius.circular(20.r),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'kg',
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
 
-                                SizedBox(height: 24.h),
+                                SizedBox(height: spaceBetweenElements),
 
-                                // Scale markings and slider
+                                // Weight display area with slider - no fixed height
                                 Container(
-                                  width: 0.7.sw,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF9E8),
+                                    borderRadius: BorderRadius.circular(15.r),
+                                  ),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      // Scale markings
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            _weightUnit == 'kg' ? '30' : '66',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                          Text(
-                                            _weightUnit == 'kg' ? '70' : '154',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                          Text(
-                                            _weightUnit == 'kg' ? '115' : '253',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                          Text(
-                                            _weightUnit == 'kg' ? '160' : '352',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                          Text(
-                                            _weightUnit == 'kg' ? '200' : '440',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.grey[600],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      // Scale ticks
+                                      // Weight value display
                                       Container(
-                                        width: 0.9
-                                            .sw, // Ensure the container doesn't overflow
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: List.generate(
-                                            41,
-                                            (index) => Container(
-                                              height:
-                                                  index % 10 == 0 ? 12.h : 6.h,
-                                              width: 1.w,
-                                              color: Colors.grey[400],
+                                        width: 0.4.sw,
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            _formatWeight(_weight),
+                                            style: TextStyle(
+                                              fontSize: textSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
                                             ),
                                           ),
                                         ),
                                       ),
 
-                                      // Slider
-                                      SliderTheme(
-                                        data: SliderThemeData(
-                                          activeTrackColor: Colors.transparent,
-                                          inactiveTrackColor:
-                                              Colors.transparent,
-                                          thumbColor: Colors.black,
-                                          thumbShape: RoundSliderThumbShape(
-                                            enabledThumbRadius: 6.r,
-                                          ),
-                                          overlayShape: RoundSliderOverlayShape(
-                                            overlayRadius: 12.r,
-                                          ),
-                                          trackHeight: 0,
+                                      SizedBox(height: spaceBetweenElements),
+
+                                      // Scale markings and slider
+                                      Container(
+                                        width: 0.7.sw,
+                                        child: Column(
+                                          children: [
+                                            // Scale markings
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  _weightUnit == 'kg'
+                                                      ? '30'
+                                                      : '66',
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  _weightUnit == 'kg'
+                                                      ? '70'
+                                                      : '154',
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  _weightUnit == 'kg'
+                                                      ? '115'
+                                                      : '253',
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  _weightUnit == 'kg'
+                                                      ? '160'
+                                                      : '352',
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  _weightUnit == 'kg'
+                                                      ? '200'
+                                                      : '440',
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+
+                                            // Scale ticks
+                                            Container(
+                                              width: 0.9.sw,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: List.generate(
+                                                  41,
+                                                  (index) => Container(
+                                                    height: index % 10 == 0
+                                                        ? 8.h
+                                                        : 4.h,
+                                                    width: 1.w,
+                                                    color: Colors.grey[400],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+
+                                            // Slider
+                                            SliderTheme(
+                                              data: SliderThemeData(
+                                                activeTrackColor:
+                                                    Colors.transparent,
+                                                inactiveTrackColor:
+                                                    Colors.transparent,
+                                                thumbColor: Colors.black,
+                                                thumbShape:
+                                                    RoundSliderThumbShape(
+                                                  enabledThumbRadius: 4.r,
+                                                ),
+                                                overlayShape:
+                                                    RoundSliderOverlayShape(
+                                                  overlayRadius: 8.r,
+                                                ),
+                                                trackHeight: 0,
+                                              ),
+                                              child: Slider(
+                                                value:
+                                                    _weight.clamp(30.0, 200.0),
+                                                min: 30.0,
+                                                max: 200.0,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _weight = value;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        child: Slider(
-                                          value: _weight.clamp(30.0, 200.0),
-                                          min: 30.0,
-                                          max: 200.0,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _weight = value;
-                                            });
-                                          },
+                                      ),
+
+                                      // Weight unit
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 10.h),
+                                        child: Text(
+                                          _weightUnit,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Colors.grey[600],
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
 
-                                // Weight unit
-                                Text(
-                                  _weightUnit,
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: Colors.grey[600],
+                                SizedBox(height: 90.h),
+
+                                // Next button - always appears after the slider
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 20.h),
+                                  child: CustomButton(
+                                    text: _translations['next']!,
+                                    onPressed: _continueToNextScreen,
+                                    width: 1.sw - 40.w,
+                                    height: buttonHeight,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-
-                          Spacer(),
-
-                          // Next button
-                          SafeArea(
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: 20.h),
-                              child: CustomButton(
-                                text: _translations['next']!,
-                                onPressed: _continueToNextScreen,
-                                width: 1.sw - 32.w,
-                                height: 50.h,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
             ),
     );
